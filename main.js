@@ -4,6 +4,19 @@
  */
 enchant();
 
+window.onload = function() {
+	game = new Game(320, 320);
+	//game.preload('block.png');
+	//game.preload('ball.png');
+	game.preload('bar.png');
+	game.fps = 60;
+	game.onload = function() {
+		var bar = new Bar(150, 300);
+        game.rootScene.backgroundColor = '#393939';
+	}
+	game.start();
+};
+
 Bar = Class.create(Sprite, {
     initialize: function (x, y) {
 		//スプライトのコンストラクタ
@@ -16,23 +29,11 @@ Bar = Class.create(Sprite, {
 		this.frame = 0;
 
 		//イベェェント
-		if (game.input.left) this.x -= 5;
-		if (game.input.right) this.x += 5;
+		this.addEventListener('enterframe', function() {
+			if (game.input.left) this.x -= 5;
+			if (game.input.right) this.x += 5;
+		});
 		//ルートシーンに追加
         game.rootScene.addChild(this);
 	}
 });
-
-window.onload = function() {
-
-	var game = new Game(320, 320);
-	//game.preload('block.png');
-	//game.preload('ball.png');
-	game.preload('bar.png');
-	game.fps = 60;
-	game.onload = function() {
-		var bar = new Bar(150, 150);
-	}
-	game.start();
-};
-
