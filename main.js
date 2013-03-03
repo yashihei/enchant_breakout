@@ -12,22 +12,15 @@ window.onload = function() {
 	game.fps = 60;
 	game.onload = function() {
 		bar = new Bar(100, 200);
-		ball = new Ball(100, 200);
+		ball = new Ball(100, 190);
 		this.addEventListener('enterframe', function() {
-			// console.log(ball.dy);
+			console.log((Math.PI/2));
 			if (ball.intersect(bar)) {
 				ball.y = bar.y - ball.height;
-				ball.angle = -ball.angle;
-				//ball.dx = ((ball.x+5 - bar.x+20) / (20 + 5)) * 2;
-				// //バーの左端に当たったとき
-				// if (bar.x + bar.width/2 < ball.x) {
-				// 	ball.dx = 3;
-				// 	ball.dy *= -1;
-				// } else {
-				// 	ball.dx = -3;
-				// 	ball.dy *= -1;
-				// }
+				//30~150度
+				ball.angle = 90 - ((ball.x+5 - (bar.x+20)) / 25) * 60;
 			}
+			if (game.input.up) ball.speed = 0;
 		});
 	}
 	game.start();
@@ -41,8 +34,6 @@ Bar = Class.create(Sprite, {
 		//座標
 		this.x = x - this.width/2;
 		this.y = y;
-		//何番目の画像
-		this.frame = 0;
 
 		//イベェェント
 		this.addEventListener('enterframe', function() {
@@ -64,20 +55,20 @@ Ball = Class.create(Sprite, {
 		this.x = x;
 		this.y = y;
 		this.speed = 5;
-		this.angle = 40/180 * Math.PI;//ここランダムにしよう
+		this.angle = 40;//ここランダムにしよう
 		this.addEventListener('enterframe', function() {
 			//移動量
-			this.x += this.speed * Math.cos(this.angle);
-			this.y -= this.speed * Math.sin(this.angle);
+			this.x += this.speed * Math.cos(this.angle/180 * Math.PI);
+			this.y -= this.speed * Math.sin(this.angle/180 * Math.PI);
 			//左端に来た時
 			if (this.x < 0) {
 				this.x = 0;
-				this.angle = Math.PI - this.angle;
+				this.angle = 180 - this.angle;
 			}
 			//右端に来た時
 			if (this.x > game.width - this.width) {
 				this.x = game.width - this.width;
-				this.angle = Math.PI - this.angle;
+				this.angle = 180 - this.angle;
 			}
 			//上端に来た時
 			if (this.y < 0) {
