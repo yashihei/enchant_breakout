@@ -17,14 +17,16 @@ window.onload = function() {
 			// console.log(ball.dy);
 			if (ball.intersect(bar)) {
 				ball.y = bar.y - ball.height;
-				//バーの左端に当たったとき
-				if (bar.x + bar.width/2 < ball.x) {
-					ball.dx = 3;
-					ball.dy *= -1;
-				} else {
-					ball.dx = -3;
-					ball.dy *= -1;
-				}
+				ball.angle = -ball.angle;
+				//ball.dx = ((ball.x+5 - bar.x+20) / (20 + 5)) * 2;
+				// //バーの左端に当たったとき
+				// if (bar.x + bar.width/2 < ball.x) {
+				// 	ball.dx = 3;
+				// 	ball.dy *= -1;
+				// } else {
+				// 	ball.dx = -3;
+				// 	ball.dy *= -1;
+				// }
 			}
 		});
 	}
@@ -61,32 +63,31 @@ Ball = Class.create(Sprite, {
 		this.image = game.assets['ball.png'];
 		this.x = x;
 		this.y = y;
-		this.dx = 1;
-		this.dy = -3;
-		this.frame = 0;
+		this.speed = 5;
+		this.angle = 40/180 * Math.PI;//ここランダムにしよう
 		this.addEventListener('enterframe', function() {
-			//移動量加算
-			this.x += this.dx;
-			this.y += this.dy;
+			//移動量
+			this.x += this.speed * Math.cos(this.angle);
+			this.y -= this.speed * Math.sin(this.angle);
 			//左端に来た時
 			if (this.x < 0) {
 				this.x = 0;
-				this.dx *= -1;
+				this.angle = Math.PI - this.angle;
 			}
 			//右端に来た時
 			if (this.x > game.width - this.width) {
 				this.x = game.width - this.width;
-				this.dx *= -1;
+				this.angle = Math.PI - this.angle;
 			}
 			//上端に来た時
 			if (this.y < 0) {
 				this.y = 0;
-				this.dy *= -1;
+				this.angle = -this.angle;
 			}
 			//下端に来た時
 			if (this.y > game.height - this.height) {
 				this.y = game.height - this.height;
-				this.dy *= -1;
+				this.angle = -this.angle;
 			}
 		});
 		game.rootScene.addChild(this);
