@@ -6,19 +6,24 @@ enchant();
 
 window.onload = function() {
 	game = new Game(200, 250);
-	//game.preload('block.png');
 	game.preload('ball.png');
 	game.preload('bar.png');
+	game.preload('block.png');
 	game.fps = 60;
 	game.onload = function() {
-		bar = new Bar(100, 200);
-		ball = new Ball(100, 190);
+		var bar = new Bar(100, 200);
+		var ball = new Ball(100, 190);
+		var blocks = [];
+		for (var i=0; i < 7; i++) {
+			for (var j=0; j < 4; j++) {
+				blocks[i*4 + j] = new Block(j*40+20, i*15+20);
+			}
+		}
 		this.addEventListener('enterframe', function() {
-			console.log((Math.PI/2));
 			if (ball.intersect(bar)) {
 				ball.y = bar.y - ball.height;
-				//30~150度
-				ball.angle = 90 - ((ball.x+5 - (bar.x+20)) / 25) * 60;
+				ball.dy *= -1;
+				ball.dx = ((ball.x+5 - (bar.x+20)) / 25) * 3;
 			}
 			if (game.input.up) ball.speed = 0;
 		});
@@ -34,7 +39,6 @@ Bar = Class.create(Sprite, {
 		//座標
 		this.x = x - this.width/2;
 		this.y = y;
-
 		//イベェェント
 		this.addEventListener('enterframe', function() {
 			if (game.input.left) this.x -= 5;
@@ -54,33 +58,43 @@ Ball = Class.create(Sprite, {
 		this.image = game.assets['ball.png'];
 		this.x = x;
 		this.y = y;
-		this.speed = 5;
-		this.angle = 40;//ここランダムにしよう
+		this.dx = 1;
+		this.dy = -3;
 		this.addEventListener('enterframe', function() {
 			//移動量
-			this.x += this.speed * Math.cos(this.angle/180 * Math.PI);
-			this.y -= this.speed * Math.sin(this.angle/180 * Math.PI);
+			this.x += this.dx;
+			this.y += this.dy;
 			//左端に来た時
 			if (this.x < 0) {
 				this.x = 0;
-				this.angle = 180 - this.angle;
+				this.dx *= -1;
 			}
 			//右端に来た時
 			if (this.x > game.width - this.width) {
 				this.x = game.width - this.width;
-				this.angle = 180 - this.angle;
+				this.dx *= -1;
 			}
 			//上端に来た時
 			if (this.y < 0) {
 				this.y = 0;
-				this.angle = -this.angle;
+				this.dy *= -1;
 			}
 			//下端に来た時
 			if (this.y > game.height - this.height) {
 				this.y = game.height - this.height;
-				this.angle = -this.angle;
+				this.dy *= -1;
 			}
 		});
+		game.rootScene.addChild(this);
+	}
+});
+
+Block = Class.create(Sprite, {
+	initialize: function (x, y) {
+		Sprite.call(this, 40, 15);
+		this.image = game.assets['block.png'];
+		this.x = x;
+		this.y = y;
 		game.rootScene.addChild(this);
 	}
 });
