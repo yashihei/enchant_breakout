@@ -49,8 +49,10 @@ window.onload = function() {
 					game.rootScene.removeChild(blocks[i]);
 				}
 			}
-			// if (blocks.length < 20) game.end();
-			console.log(blocks.length);
+			for (var i=0; i < 32; i++) {
+				if (blocks[i].flag == 0) break;
+				if (i == 31) game.end();
+			}
 		});
 	}
 	game.start();
@@ -103,9 +105,8 @@ Ball = Class.create(Sprite, {
 				this.dy *= -1;
 			}
 			//下端に来た時
-			if (this.y > game.height - this.height) {
-				this.y = game.height - this.height;
-				this.dy *= -1;
+			if (this.y > game.height) {
+				game.end()
 			}
 		});
 		game.rootScene.addChild(this);
