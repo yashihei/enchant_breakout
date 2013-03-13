@@ -19,6 +19,7 @@ window.onload = function() {
 		var bar = new Bar(100, 200);
 		var ball = new Ball(100, 190);
 		var blocks = [];
+		//ブロックを配置する
 		for (var i=0; i < 8; i++) {
 			for (var j=0; j < 4; j++) {
 				blocks[i*4 + j] = new Block(j*40+20, i*15+20);
@@ -26,17 +27,21 @@ window.onload = function() {
 		}
 		var scoreLabel = new ScoreLabel(2, 2);
         game.rootScene.backgroundColor = '#eee';
+
 		this.addEventListener('enterframe', function() {
+			//ボールとバーの接触判定
 			if (ball.intersect(bar)) {
 				ball.y = bar.y - ball.height;
 				ball.dy *= -1;
+				//ボールとバーの中心座標の差からx移動量を決める
 				ball.dx = ((ball.x+ball.width/2 - (bar.x+bar.width/2)) / 25) * 3;
 				bar.se.play();
 			}
+			//ボールとブロックの接触判定
 			for (var i=0; i < 32; i++) {
 				if (blocks[i].flag == 1) continue;
 				if (blocks[i].intersect(ball)) {
-					//ボールの移動量が4以上にならないのを条件として
+					//ボールの移動量が4以上にならないのが前提
 					if (ball.y+ball.height < blocks[i].y+4) {
 						ball.dy = (ball.dy < 0 ? ball.dy*-1 : ball.dy);
 					} else if (blocks[i].y+blocks[i].height-4 < ball.y) {
@@ -52,6 +57,7 @@ window.onload = function() {
 					game.rootScene.removeChild(blocks[i]);
 				}
 			}
+			//クリア判定
 			for (var i=0; i < 32; i++) {
 				if (blocks[i].flag == 0) break;
 				if (i == 31) game.end();
@@ -61,17 +67,16 @@ window.onload = function() {
 	game.start();
 };
 
-Bar = Class.create(Sprite, {
+var Bar = Class.create(Sprite, {
     initialize: function (x, y) {
         Sprite.call(this, 40, 10);
 		this.image = game.assets['bar.png'];
 		this.se = game.assets['lock2.wav'].clone();
-		this.x = x - this.width/2;1000
+		this.x = x - this.width/2;
 		this.y = y;
 		this.addEventListener('enterframe', function() {
 			if (game.input.left) this.x -= BAR_SPEED;
 			if (game.input.right) this.x += BAR_SPEED;
-			//行動制限
 			if (game.width - this.width < this.x) this.x = game.width - this.width;
 			if (this.x < 0) this.x = 0;
 		});
@@ -79,7 +84,7 @@ Bar = Class.create(Sprite, {
 	},
 });
 
-Ball = Class.create(Sprite, {
+var Ball = Class.create(Sprite, {
 	initialize: function (x, y)  {
 		Sprite.call(this, 10, 10);
 		this.image = game.assets['ball.png'];
@@ -89,25 +94,20 @@ Ball = Class.create(Sprite, {
 		this.dy = -3;
 		this.angle = 40;
 		this.addEventListener('enterframe', function() {
-			//移動量
 			this.x += this.dx;
 			this.y -= this.dy;
-			//左端に来た時
 			if (this.x < 0) {
 				this.x = 0;
 				this.dx *= -1;
 			}
-			//右端に来た時
 			if (this.x > game.width - this.width) {
 				this.x = game.width - this.width;
 				this.dx *= -1;
 			}
-			//上端に来た時
 			if (this.y < 0) {
 				this.y = 0;
 				this.dy *= -1;
 			}
-			//下端に来た時
 			if (this.y > game.height) {
 				game.end();
 			}
@@ -116,7 +116,7 @@ Ball = Class.create(Sprite, {
 	},
 });
 
-Block = Class.create(Sprite, {
+var Block = Class.create(Sprite, {
 	initialize: function (x, y) {
 		Sprite.call(this, 40, 15);
 		this.image = game.assets['block.png'];
@@ -129,7 +129,7 @@ Block = Class.create(Sprite, {
 	},
 });
 
-ScoreLabel = Class.create(Label, {
+var ScoreLabel = Class.create(Label, {
 	initialize: function (x, y) {
 		Label.call(this);
 		this.x = x;
