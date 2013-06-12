@@ -26,7 +26,7 @@ window.onload = function() {
 			}
 		}
 		var scoreLabel = new ScoreLabel(2, 2);
-        game.rootScene.backgroundColor = '#eee';
+    	game.rootScene.backgroundColor = '#eee';
 
 		this.addEventListener('enterframe', function() {
 			//ボールとバーの接触判定
@@ -38,7 +38,7 @@ window.onload = function() {
 				bar.se.play();
 			}
 			//ボールとブロックの接触判定
-			for (var i=0; i < 32; i++) {
+			for (var i=0; i < blocks.length; i++) {
 				if (blocks[i].flag == 1) continue;
 				if (blocks[i].intersect(ball)) {
 					//ボールの移動量が4以上にならないのが前提
